@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Serviço do Banco de Dados PostgreSQL
   db:
@@ -12,10 +10,14 @@ services:
       - "5432:5432" # Expor a porta para debug, se necessário
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Mapeia o seu código-fonte local para dentro do container
+      - ./backend-core/src:/app/src
+      # Mapeia o seu pom.xml local para dentro do container
+      - ./backend-core/pom.xml:/app/pom.xml
 
   # Serviço do Backend Core (Spring)
   core-api:
-    build: ./backend-core  # Aponta para a pasta do projeto Spring
+    build: ./backend-core-api  # Aponta para a pasta do projeto Spring
     ports:
       - "8080:8080"
     depends_on:
@@ -27,18 +29,18 @@ services:
       - ML_API_URL=http://ml-api:5000 # URL para comunicar com o serviço de ML
 
   # Serviço da Análise de Crédito (Python)
-  ml-api:
-    build: ./ml-api # Aponta para a pasta do projeto Python
-    ports:
-      - "5000:5000"
+  #ml-api:
+  #  build: ./backend-ml-api # Aponta para a pasta do projeto Python
+  #  ports:
+  #    - "5000:5000"
 
   # Serviço do Frontend (React)
-  frontend:
-    build: ./frontend # Aponta para a pasta do projeto React
-    ports:
-      - "3000:3000"
-    depends_on:
-      - core-api # O frontend depende da API principal
+  #frontend:
+  #  build: ./frontend # Aponta para a pasta do projeto React
+  #  ports:
+  #    - "3000:3000"
+  #  depends_on:
+  #    - core-api # O frontend depende da API principal
 
 volumes:
   postgres_data:
