@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados PostgreSQL
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: qitechdb
+    ports:
+      - "5432:5432" # Expor a porta para debug, se necessário
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Serviço do Backend Core (Spring)
+  core-api:
+    build: ./backend-core  # Aponta para a pasta do projeto Spring
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db # Garante que o DB inicie antes do backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/qitechdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - ML_API_URL=http://ml-api:5000 # URL para comunicar com o serviço de ML
+
+  # Serviço da Análise de Crédito (Python)
+  ml-api:
+    build: ./ml-api # Aponta para a pasta do projeto Python
+    ports:
+      - "5000:5000"
+
+  # Serviço do Frontend (React)
+  frontend:
+    build: ./frontend # Aponta para a pasta do projeto React
+    ports:
+      - "3000:3000"
+    depends_on:
+      - core-api # O frontend depende da API principal
+
+volumes:
+  postgres_data:
