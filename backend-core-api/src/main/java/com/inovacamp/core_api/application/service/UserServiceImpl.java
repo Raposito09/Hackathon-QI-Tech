@@ -24,6 +24,7 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
         // 2. Criptografar a senha
         String hashedPassword = passwordEncoder.encode(request.getPassword());
+        int randomCreditScore = ThreadLocalRandom.current().nextInt(300, 1000);
 
         // 3. Criar a nova entidade User
         User newUser = User.builder()
@@ -55,6 +57,7 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .password(hashedPassword)
                 .kycStatus(KycStatus.PENDING) // Status inicial
+                .creditScore(randomCreditScore)
                 .build();
 
         // 4. Salvar o usuário no banco de dados

@@ -7,12 +7,14 @@ import com.inovacamp.core_api.domain.entity.Withdrawal;
 import com.inovacamp.core_api.domain.enums.PixChargeStatus;
 import com.inovacamp.core_api.domain.enums.WithdrawalStatus;
 import com.inovacamp.core_api.domain.repository.PixChargeRepository;
+import com.inovacamp.core_api.domain.repository.UserRepository;
 import com.inovacamp.core_api.domain.repository.WalletRepository;
 import com.inovacamp.core_api.domain.repository.WithdrawalRepository;
 import com.inovacamp.core_api.domain.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +31,25 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final PixChargeRepository pixChargeRepository;
     private final WithdrawalRepository withdrawalRepository;
+    private final UserRepository userRepository; // <-- NOVA DEPENDÊNCIA
+
+    private User getAuthenticatedUser() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Authenticated user not found in database"));
+    }
+
+
 
     @Override
     public PixChargeResponse createPixCharge(UUID walletId, PixChargeRequest request) {
         var wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found")); // Pode ser uma exceção customizada
 
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = getAuthenticatedUser();
+        if (!wallet.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("User does not have permission to access this wallet");
+        }
 
         // 2. Compara o ID do dono da carteira com o ID do usuário autenticado
         if (!wallet.getUser().getId().equals(currentUser.getId())) {
@@ -103,8 +117,7 @@ public class WalletServiceImpl implements WalletService {
         var wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
-        // 1. Verificação de Segurança (dono da carteira)
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = getAuthenticatedUser();
         if (!wallet.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("User does not have permission to access this wallet");
         }
@@ -141,8 +154,7 @@ public class WalletServiceImpl implements WalletService {
         var wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
-        // Reutilizando nossa checagem de segurança!
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = getAuthenticatedUser();
         if (!wallet.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("User does not have permission to access this wallet");
         }

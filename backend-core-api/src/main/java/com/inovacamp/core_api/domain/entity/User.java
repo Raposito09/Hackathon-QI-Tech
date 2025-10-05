@@ -88,4 +88,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true; // A conta está sempre habilitada
     }
+
+    @Column
+    private Integer creditScore;
 }
