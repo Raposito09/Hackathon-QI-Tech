@@ -65,6 +65,13 @@ services:
   #    - "3000:3000"
   #  depends_on:
   #    - core-api # O frontend depende da API principal
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80" # Mapeia a porta 3000 da sua máquina para a porta 80 do container Nginx
+    depends_on:
+      - core-api
+
 
 volumes:
   postgres_data:

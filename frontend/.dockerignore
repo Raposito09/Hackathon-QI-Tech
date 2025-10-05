@@ -1,0 +1,9 @@
+# Ignorar dependências, elas serão instaladas no container
+node_modules
+
+# Ignorar o output do build local, ele será gerado no container
+build
+dist
+
+# Ignorar arquivos de log e debug do npm
+npm-debug.log*
