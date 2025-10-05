@@ -79,8 +79,7 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em sua máqu
     cd Hackathon-QI-Tech
     ```
 2.  **npm i**
-    cd frontend e npm install
-    se o build falhar uma vez, rode de novo pra gerar o bucket
+    cd frontend e npm install. se o build falhar uma vez, rode de novo pra gerar o bucket
 
 ### Inicialização dos Serviços
 
