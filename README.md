@@ -51,7 +51,7 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em sua máqu
     cd Hackathon-QI-Tech
     ```
 2.  **Variáveis de Ambiente:**
-    Crie um arquivo chamado `.env` na raiz do projeto (na mesma pasta do `docker-compose.yml`) com o conteúdo do arquivo `.env.example` do repositório. *É crucial que este passo seja feito para que os serviços se comuniquem corretamente.*
+    cd frontend e npm install
 
 ### Inicialização dos Serviços
 
