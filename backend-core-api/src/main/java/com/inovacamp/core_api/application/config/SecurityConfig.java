@@ -1,8 +1,10 @@
 package com.inovacamp.core_api.application.config;
 
+import com.inovacamp.core_api.application.filter.JwtAuthenticationFilter;
 import com.inovacamp.core_api.domain.repository.UserRepository;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +30,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         System.out.println(">>> CRIANDO BEAN: SecurityFilterChain");
         http
                 // Desabilita CSRF pois a API é stateless
@@ -50,9 +52,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // AS LINHAS FALTANTES ESTÃO AQUI:
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable);
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

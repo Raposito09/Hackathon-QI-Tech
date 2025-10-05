@@ -2,12 +2,11 @@ package com.inovacamp.core_api.application.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
 import java.util.UUID;
 
 @Data
 @Builder
-public class KycStatusResponse {
-    private UUID userId;
-    private String status;
+public class KycUploadResponse {
+    private String uploadUrl;
+    private UUID fileId;
 }
