@@ -24,33 +24,6 @@ Este projeto foi desenvolvido durante o Hackathon QI Tech, construindo a base de
 
 A plataforma é construída sobre uma arquitetura modular e moderna, orquestrada via Docker Compose.
 
-```mermaid
-graph TD
-    subgraph "Cliente"
-        U(👤 Usuário / Navegador)
-    end
-
-    subgraph "Ambiente Docker"
-        F[🌐 Frontend (React + Nginx)]
-        B[⚙️ Backend - core-api (Spring Boot)]
-        DB[(🗄️ Banco de Dados <br> PostgreSQL)]
-        S3[📦 Storage de Arquivos <br> MinIO (S3)]
-        ML[🧠 Serviço de ML - ml-api <br> <i>(Planejado)</i>]
-    end
-
-    U --"Acessa a plataforma"--> F
-
-    F --"1. Requisições API REST (JSON)<br><i>(Login, Listar Empréstimos, etc.)</i>"--> B
-
-    B --"2. Persistência de Dados<br><i>(Lê/Escreve Usuários, Carteiras, Empréstimos)</i>"--> DB
-
-    B --"3a. Solicita URL de Upload (KYC)"--> S3
-    S3 --"3b. Retorna URL Pré-Assinada"--> B
-    B --"3c. Envia URL para o Frontend"--> F
-    F --"3d. Faz Upload direto do Arquivo"--> S3
-
-    B -.->|4. Pede Análise de Risco (Futuro)| ML
-```
 
 * **`frontend` (React + Nginx):** Interface do usuário construída com React e Tailwind CSS, servida por um servidor Nginx otimizado para Single-Page Applications (SPAs).
 * **`core-api` (Spring Boot):** O microsserviço principal, responsável por toda a lógica de negócio, autenticação, gestão de usuários, carteiras e empréstimos. Expõe uma API RESTful.
