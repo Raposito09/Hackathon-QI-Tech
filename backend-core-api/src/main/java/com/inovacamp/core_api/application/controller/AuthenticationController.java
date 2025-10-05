@@ -1,10 +1,9 @@
 package com.inovacamp.core_api.application.controller;
-import com.inovacamp.core_api.application.dto.LoginRequest;
-import com.inovacamp.core_api.application.dto.LoginResponse;
-import com.inovacamp.core_api.application.dto.RegisterRequest;
-import com.inovacamp.core_api.application.dto.RegisterResponse;
+import com.inovacamp.core_api.application.config.SecurityConfig;
+import com.inovacamp.core_api.application.dto.*;
 import com.inovacamp.core_api.domain.service.AuthenticationService;
 import com.inovacamp.core_api.domain.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,5 +28,9 @@ public class AuthenticationController {
         return authenticationService.login(request);
     }
 
+    @PostMapping("/mfa/verify")
+    public JwtAuthenticationResponse verifyMfa(@RequestBody @Valid MfaVerificationRequest request) {
+        return authenticationService.verifyMfa(request);
+    }
 
 }
