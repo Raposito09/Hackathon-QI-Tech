@@ -6,10 +6,12 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.inovacamp.core_api.application.dto.*;
 import com.inovacamp.core_api.domain.entity.KycDocument;
 import com.inovacamp.core_api.domain.entity.User;
+import com.inovacamp.core_api.domain.entity.Wallet;
 import com.inovacamp.core_api.domain.enums.KycStatus;
 import com.inovacamp.core_api.domain.enums.UploadStatus;
 import com.inovacamp.core_api.domain.repository.KycDocumentRepository;
 import com.inovacamp.core_api.domain.repository.UserRepository;
+import com.inovacamp.core_api.domain.repository.WalletRepository;
 import com.inovacamp.core_api.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
@@ -30,6 +33,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final KycDocumentRepository kycDocumentRepository;
     private final AmazonS3 s3Client;
+    private final WalletRepository walletRepository;
+
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
@@ -55,12 +60,22 @@ public class UserServiceImpl implements UserService {
         // 4. Salvar o usuário no banco de dados
         User savedUser = userRepository.save(newUser);
 
+        Wallet newWallet = Wallet.builder()
+                .user(savedUser)
+                .balance(BigDecimal.ZERO) // Saldo inicial de 0.00
+                .currency("BRL") // Moeda padrão
+                .build();
+
+        walletRepository.save(newWallet);
+
         // 5. Retornar a resposta DTO
         return RegisterResponse.builder()
                 .userId(savedUser.getId())
                 .email(savedUser.getEmail())
                 .message("User registered successfully. Please login.")
                 .build();
+
+
     }
 
     @Override
