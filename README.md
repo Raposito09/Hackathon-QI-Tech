@@ -82,7 +82,7 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em sua máqu
     cd frontend e npm install. se o build falhar uma vez, rode de novo pra gerar o bucket
 
 
-2.  **se falar**
+2.  **se falhar**
    rode de novo se falhar para gerar o bucket
 
 ### Inicialização dos Serviços
